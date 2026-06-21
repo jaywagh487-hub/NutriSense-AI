@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% set active = "weightgain" %}
+{% block title %}Weight Gain Plan — NutriSense AI{% endblock %}
+
+{% block body %}
+<div class="page-bg" style="background-image:url('https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=1600');">
+  <div class="content" style="display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 62px);">
+    <div class="card reveal in-view">
+
+      <div class="eyebrow">Weight Management</div>
+      <h2 style="font-size:1.5rem;font-weight:800;color:var(--green-900);margin-bottom:4px;">💪 Weight Gain Plan</h2>
+      <p style="color:var(--text-soft);margin-bottom:20px;">Healthy, sustainable weight gain through a calorie-rich Indian diet.</p>
+
+      <form method="post">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+          <div class="form-group">
+            <label>Current Weight (kg)</label>
+            <input type="number" name="current_weight" placeholder="50" min="20" max="300" required>
+          </div>
+          <div class="form-group">
+            <label>Target Weight (kg)</label>
+            <input type="number" name="target_weight" placeholder="60" min="20" max="300" required>
+          </div>
+        </div>
+        <button class="btn btn-block" type="submit">🎯 Generate My Plan</button>
+      </form>
+
+      {% if plan %}
+      <div class="plan-card">
+        <h3 style="color:var(--green-800);font-weight:700;margin-bottom:14px;">Your Personalised Plan</h3>
+
+        <div class="plan-tip"><span class="plan-tip-icon">🍚</span><div><strong>Caloric Surplus:</strong> Eat 300–500 extra calories daily through nutrient-dense foods.</div></div>
+        <div class="plan-tip"><span class="plan-tip-icon">🏋️</span><div><strong>Strength Training:</strong> Focus on compound lifts 3–4x per week to build lean muscle.</div></div>
+        <div class="plan-tip"><span class="plan-tip-icon">🥛</span><div><strong>Protein:</strong> Aim for 1.2–1.6g protein per kg body weight. Milk, paneer, dal, eggs.</div></div>
+        <div class="plan-tip"><span class="plan-tip-icon">⏰</span><div><strong>Meal Timing:</strong> Eat every 3–4 hours. Never skip breakfast. Add a bedtime snack.</div></div>
+
+        <p style="font-size:0.82rem;font-weight:700;color:var(--text-mid);margin:14px 0 8px;">Calorie-Rich Indian Foods</p>
+        <div class="plan-foods">
+          {% for f in plan.foods %}<span class="food-chip">🌿 {{ f }}</span>{% endfor %}
+        </div>
+
+        <div class="video-wrap">
+          <iframe src="{{ plan.video }}" allowfullscreen></iframe>
+        </div>
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% set active = "protein" %}
+{% block title %}Vegetarian Protein Calculator — NutriSense AI{% endblock %}
+
+{% block body %}
+<div class="page-bg" style="background-image:url('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=1600');">
+  <div class="content" style="display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 62px);">
+    <div class="card reveal in-view">
+
+      <div class="eyebrow">Pure Vegetarian Nutrition</div>
+      <h2 style="font-size:1.5rem;font-weight:800;color:var(--green-900);margin-bottom:4px;">🌱 Vegetarian Protein Calculator</h2>
+      <p style="color:var(--text-soft);margin-bottom:20px;">Find your daily protein target and see how to hit it with vegetarian Indian foods — no eggs, no meat.</p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div class="form-group">
+          <label>Body Weight (kg)</label>
+          <input type="number" id="pWeight" placeholder="65" min="20" max="300">
+        </div>
+        <div class="form-group">
+          <label>Activity Level</label>
+          <select id="pActivity">
+            <option value="0.8">Sedentary (little exercise)</option>
+            <option value="1.0" selected>Lightly Active</option>
+            <option value="1.3">Active / Trains Regularly</option>
+            <option value="1.6">Muscle Gain Focus</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn btn-block" id="calcProteinBtn" type="button">🧮 Calculate My Target</button>
+
+      <div id="proteinResult" style="display:none;" class="plan-card">
+        <div style="text-align:center;margin-bottom:18px;">
+          <span style="font-size:0.82rem;color:var(--text-mute);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Daily Target</span>
+          <div style="font-size:2.2rem;font-weight:800;color:var(--green-700);" id="proteinTargetVal">0g</div>
+          <p style="color:var(--text-soft);font-size:0.85rem;" id="proteinNote"></p>
+        </div>
+
+        <p style="font-size:0.82rem;font-weight:700;color:var(--text-mid);margin-bottom:10px;">Hit Your Target With (per 100g/serving, approx.)</p>
+        <div id="proteinFoodTable"></div>
+
+        <div class="alert alert-info" style="margin-top:16px;">
+          💡 Combine grains + legumes (e.g. dal + rice, roti + chana) — vegetarian proteins are more complete when paired together.
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const proteinFoods = [
+  ["Paneer", "100g", 18],
+  ["Tofu", "100g", 15],
+  ["Moong Dal (cooked)", "1 cup", 14],
+  ["Chana / Chickpeas (cooked)", "1 cup", 15],
+  ["Rajma (cooked)", "1 cup", 15],
+  ["Greek Yogurt", "1 cup", 10],
+  ["Milk", "1 cup", 8],
+  ["Soybean (cooked)", "1 cup", 22],
+  ["Peanuts", "30g handful", 7],
+  ["Almonds", "30g handful", 6],
+  ["Quinoa (cooked)", "1 cup", 8],
+  ["Sprouts (mixed)", "1 cup", 9]
+];
+
+document.getElementById('calcProteinBtn').addEventListener('click', () => {
+  const w = parseFloat(document.getElementById('pWeight').value);
+  const factor = parseFloat(document.getElementById('pActivity').value);
+  const result = document.getElementById('proteinResult');
+
+  if (!w || w <= 0) {
+    document.getElementById('pWeight').style.borderColor = 'var(--danger)';
+    return;
+  }
+  document.getElementById('pWeight').style.borderColor = '';
+
+  const target = Math.round(w * factor);
+  document.getElementById('proteinTargetVal').textContent = target + 'g';
+  document.getElementById('proteinNote').textContent =
+    `Based on ${w}kg body weight at ${factor}g protein per kg`;
+
+  document.getElementById('proteinFoodTable').innerHTML = proteinFoods.map(([name, serving, p]) => {
+    const servingsNeeded = Math.ceil(target / p);
+    return `<div class="plan-tip">
+      <span class="plan-tip-icon">🌿</span>
+      <div style="flex:1;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;">
+        <span><strong>${name}</strong> <span style="color:var(--text-mute);font-size:0.8rem;">(${serving} ≈ ${p}g protein)</span></span>
+        <span class="tag">${servingsNeeded}× serving${servingsNeeded > 1 ? 's' : ''}/day</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  result.style.display = 'block';
+  result.style.animation = 'slideUp 0.4s ease both';
+});
+</script>
+{% endblock %}

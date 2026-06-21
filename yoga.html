@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% set active = "yoga" %}
+{% block title %}Yoga for Deficiencies — NutriSense AI{% endblock %}
+
+{% block body %}
+<div class="page-bg" style="background-image:url('https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=1600');">
+  <div class="content" style="display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 62px);">
+    <div class="card card-wide reveal in-view">
+
+      <div class="eyebrow">Yoga Therapy</div>
+      <h2 style="font-size:1.5rem;font-weight:800;color:var(--green-900);margin-bottom:4px;">🧘 Yoga for Deficiencies</h2>
+      <p style="color:var(--text-soft);margin-bottom:6px;">Targeted yoga poses that support the body for specific deficiencies and conditions.</p>
+
+      <div class="tab-bar" id="yogaTabs">
+        <button class="tab active" data-cond="calcium">🦴 Calcium</button>
+        <button class="tab" data-cond="iron">🩸 Iron</button>
+        <button class="tab" data-cond="stress">🧘 Stress</button>
+        <button class="tab" data-cond="vitamind">☀️ Vitamin D</button>
+      </div>
+
+      <div id="yogaResult"></div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const yogaData = {
+  calcium: {
+    title: "Calcium Deficiency — Bone Strengthening Poses",
+    desc: "Weight-bearing and balance poses stimulate bone density. Practice gently, especially if bones are already weak.",
+    poses: [
+      ["🌳","Vrikshasana (Tree Pose)","Weight-bearing balance pose; strengthens leg bones and improves posture. Hold 30s/side."],
+      ["🐫","Ustrasana (Camel Pose)","Opens the chest and strengthens the spine. Hold 20–30s, avoid if you have back issues."],
+      ["🦵","Setu Bandhasana (Bridge Pose)","Strengthens the spine, hips, and thighs. Hold 30s, repeat 3x."],
+      ["🙏","Tadasana (Mountain Pose)","Improves posture and bone alignment. Hold 1 min, focus on grounding through the feet."]
+    ],
+    note: "Pair with 15–20 min morning sunlight daily for vitamin D, which helps the body absorb calcium."
+  },
+  iron: {
+    title: "Iron Deficiency — Circulation Boosting Poses",
+    desc: "Poses that increase blood flow and stimulate the digestive system, supporting better iron absorption.",
+    poses: [
+      ["🐍","Bhujangasana (Cobra Pose)","Improves blood circulation and stimulates digestion. Hold 20–30s, repeat 3x."],
+      ["🌗","Surya Namaskar (Sun Salutation)","Full-body flow that boosts circulation and energy. Start with 3–5 rounds, slow pace."],
+      ["🔄","Supta Matsyendrasana (Reclined Twist)","Gentle twist that stimulates digestive organs. Hold 30s/side."],
+      ["🦶","Viparita Karani (Legs-Up-The-Wall)","Improves venous return and reduces fatigue. Hold 3–5 minutes."]
+    ],
+    note: "Avoid intense inversions during active fatigue or if dizziness occurs — go slow and rest as needed."
+  },
+  stress: {
+    title: "Stress & Anxiety — Calming Poses",
+    desc: "Restorative poses and breathwork that lower cortisol and activate the parasympathetic nervous system.",
+    poses: [
+      ["🧎","Balasana (Child's Pose)","Calms the nervous system and gently stretches the back. Hold 1–2 minutes, breathe slowly."],
+      ["🌬️","Nadi Shodhana (Alternate Nostril Breathing)","Balances the nervous system and reduces anxiety. Practice 5 minutes."],
+      ["🛌","Shavasana (Corpse Pose)","Deep relaxation pose; lowers heart rate and cortisol. Hold 5–10 minutes at the end of practice."],
+      ["🦵","Paschimottanasana (Seated Forward Bend)","Calming forward fold that soothes the mind. Hold 30–60s, don't force the stretch."]
+    ],
+    note: "Consistency matters more than duration — even 10 minutes daily has a measurable calming effect over weeks."
+  },
+  vitamind: {
+    title: "Vitamin D Support — Sun-Friendly Practice",
+    desc: "Yoga itself doesn't produce vitamin D, but outdoor practice in morning sun combines movement with sun exposure.",
+    poses: [
+      ["🌞","Surya Namaskar (Sun Salutation) — Outdoors","Practising at sunrise combines exercise with direct sun exposure on skin. 5–10 rounds."],
+      ["🧘","Tadasana in open sunlight","Simple standing pose held outdoors for 5–10 minutes of arm/face sun exposure."],
+      ["🤸","Outdoor stretching sequence","Any gentle stretch sequence done outdoors in the morning maximises skin sun exposure time."]
+    ],
+    note: "15–20 minutes of late-morning sun on bare arms/face, a few times a week, is the primary natural source of vitamin D — yoga here is a vehicle for that exposure, not a replacement for it."
+  }
+};
+
+function renderYoga(key) {
+  const d = yogaData[key];
+  const wrap = document.getElementById('yogaResult');
+  wrap.innerHTML = `
+    <div class="plan-card">
+      <h3 style="color:var(--green-800);font-weight:700;margin-bottom:6px;">${d.title}</h3>
+      <p style="color:var(--text-soft);font-size:0.88rem;margin-bottom:16px;">${d.desc}</p>
+      ${d.poses.map(([icon, name, text]) => `
+        <div class="plan-tip">
+          <span class="plan-tip-icon">${icon}</span>
+          <div><strong>${name}:</strong> ${text}</div>
+        </div>
+      `).join('')}
+      <div class="lifestyle-tip">${d.note}</div>
+    </div>
+  `;
+  wrap.firstElementChild.style.animation = 'slideUp 0.4s ease both';
+}
+
+document.querySelectorAll('#yogaTabs .tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#yogaTabs .tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderYoga(btn.dataset.cond);
+  });
+});
+
+renderYoga('calcium');
+</script>
+{% endblock %}

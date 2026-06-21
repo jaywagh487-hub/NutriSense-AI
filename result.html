@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Analysis Results — NutriSense AI{% endblock %}
+
+{% block body %}
+<div class="page-bg" style="background-image:url('https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=1600');">
+  <div class="content">
+    <div class="card card-wide reveal in-view">
+
+      <div class="result-header">
+        {% if detected %}
+        <span class="result-icon">🔬</span>
+        <div class="eyebrow">Analysis Complete</div>
+        <h2 style="font-size:1.6rem;font-weight:800;color:var(--green-900);">
+          {{ detected | length }} Deficiency{% if detected|length > 1 %}ies{% endif %} Detected
+        </h2>
+        <p style="color:var(--text-soft);">Hello <strong>{{ name }}</strong> — here are your personalised nutrition recommendations.</p>
+        {% else %}
+        <div class="no-deficiency">
+          <div class="big-check">✅</div>
+          <h3 style="color:var(--green-700);font-weight:700;margin-top:8px;">No Deficiencies Detected!</h3>
+          <p style="color:var(--text-soft);">Great news, {{ name }}! Your symptoms don't point to any nutritional deficiency. Keep up your balanced diet.</p>
+          <a href="/dashboard" class="btn" style="margin-top:16px;display:inline-flex;">Back to Dashboard</a>
+        </div>
+        {% endif %}
+      </div>
+
+      {% if detected %}
+      <div class="deficiency-grid reveal-stagger in-view">
+        {% for d in detected %}
+        {% set info = db[d] %}
+        <div class="deficiency-card tilt-hover">
+          <div class="eyebrow" style="font-size:0.68rem;">Deficiency Detected</div>
+          <h4>{{ d }}</h4>
+
+          <p style="font-size:0.8rem;font-weight:600;color:var(--text-mid);margin-bottom:6px;">Matched Symptoms</p>
+          <div class="tag-list">
+            {% for s in info.symptoms %}<span class="tag symptom">{{ s | title }}</span>{% endfor %}
+          </div>
+
+          <p style="font-size:0.8rem;font-weight:600;color:var(--text-mid);margin:10px 0 6px;">Recommended Indian Foods</p>
+          <div class="food-chips">
+            {% for f in info.foods %}<span class="food-chip">🌿 {{ f }}</span>{% endfor %}
+          </div>
+
+          <div class="lifestyle-tip">
+            💡 {{ info.lifestyle }}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <div style="margin-top:24px;display:flex;gap:12px;flex-wrap:wrap;">
+        <a href="/symptoms" class="btn-outline">← Check Again</a>
+        <a href="/deficiency" class="btn">Full Nutrition Guide →</a>
+        <a href="/nutrients" class="btn-outline">🧬 Nutrient Encyclopedia</a>
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+{% endblock %}

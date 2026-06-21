@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% set active = "workout" %}
+{% block title %}Home Workout Planner — NutriSense AI{% endblock %}
+
+{% block body %}
+<div class="page-bg" style="background-image:url('https://images.unsplash.com/photo-1599058917765-a780eda07a3e?w=1600');">
+  <div class="content" style="display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 62px);">
+    <div class="card card-wide reveal in-view">
+
+      <div class="eyebrow">No-Equipment Fitness</div>
+      <h2 style="font-size:1.5rem;font-weight:800;color:var(--green-900);margin-bottom:4px;">🏋️ Home Workout Planner</h2>
+      <p style="color:var(--text-soft);margin-bottom:6px;">Bodyweight routines you can do at home — pick your goal to get a day-by-day plan.</p>
+
+      <div class="tab-bar" id="goalTabs">
+        <button class="tab active" data-goal="loss">🔥 Weight Loss</button>
+        <button class="tab" data-goal="gain">💪 Weight Gain / Muscle</button>
+      </div>
+
+      <div id="workoutResult"></div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const workoutData = {
+  loss: {
+    title: "Weight Loss — Fat-Burning Bodyweight Plan",
+    desc: "High-rep, cardio-leaning circuits to maximise calorie burn. No equipment needed — just floor space.",
+    schedule: [
+      ["Mon", "Full Body Cardio", ["Jumping Jacks – 3×30s", "Bodyweight Squats – 3×15", "Mountain Climbers – 3×30s", "Plank – 3×30s"]],
+      ["Tue", "Lower Body + Core", ["Lunges – 3×12/leg", "Glute Bridges – 3×15", "Bicycle Crunches – 3×20", "Wall Sit – 3×30s"]],
+      ["Wed", "Active Recovery", ["Brisk Walk – 30 min", "Stretching – 10 min", "Light Yoga – 10 min"]],
+      ["Thu", "Upper Body + Cardio", ["Push-ups (knee if needed) – 3×10", "Burpees – 3×8", "High Knees – 3×30s", "Tricep Dips (chair) – 3×12"]],
+      ["Fri", "Full Body HIIT", ["Jump Squats – 3×12", "Plank to Push-up – 3×10", "Skater Jumps – 3×20", "Russian Twists – 3×20"]],
+      ["Sat", "Core + Cardio", ["Crunches – 3×20", "Leg Raises – 3×15", "Jumping Jacks – 3×40s", "Plank – 3×40s"]],
+      ["Sun", "Rest / Light Walk", ["20–30 min easy walk", "Full body stretching"]]
+    ]
+  },
+  gain: {
+    title: "Weight Gain / Muscle — Strength Building Plan",
+    desc: "Lower-rep, higher-control bodyweight strength work to build muscle. Focus on slow, controlled reps.",
+    schedule: [
+      ["Mon", "Push (Chest, Shoulders, Triceps)", ["Push-ups – 4×10–12", "Incline Push-ups (on table) – 3×12", "Tricep Dips – 3×12", "Shoulder Taps (plank) – 3×16"]],
+      ["Tue", "Legs", ["Squats – 4×15", "Bulgarian Split Squats – 3×10/leg", "Calf Raises – 3×20", "Wall Sit – 3×45s"]],
+      ["Wed", "Pull (Back, Biceps)", ["Doorframe Rows – 4×12", "Superman Hold – 3×20s", "Towel Bicep Curls (isometric) – 3×15", "Reverse Snow Angels – 3×15"]],
+      ["Thu", "Rest / Mobility", ["Stretching – 15 min", "Light walk – 15 min"]],
+      ["Fri", "Full Body Strength", ["Push-ups – 4×12", "Squats – 4×15", "Plank – 3×45s", "Lunges – 3×12/leg"]],
+      ["Sat", "Core + Stability", ["Hollow Body Hold – 3×20s", "Side Plank – 3×30s/side", "Dead Bug – 3×12/side"]],
+      ["Sun", "Rest", ["Complete rest — recovery drives muscle growth as much as training"]]
+    ]
+  }
+};
+
+function renderWorkout(key) {
+  const d = workoutData[key];
+  const wrap = document.getElementById('workoutResult');
+  wrap.innerHTML = `
+    <div class="plan-card">
+      <h3 style="color:var(--green-800);font-weight:700;margin-bottom:6px;">${d.title}</h3>
+      <p style="color:var(--text-soft);font-size:0.88rem;margin-bottom:16px;">${d.desc}</p>
+      <div style="display:grid;gap:10px;">
+        ${d.schedule.map(([day, focus, exercises]) => `
+          <div style="background:var(--green-50);border-radius:var(--radius-sm);padding:14px 16px;border:1.5px solid var(--green-100);">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px;">
+              <strong style="color:var(--green-800);">${day}</strong>
+              <span class="tag">${focus}</span>
+            </div>
+            <div style="font-size:0.85rem;color:var(--text-mid);display:flex;flex-wrap:wrap;gap:6px;">
+              ${exercises.map(e => `<span class="food-chip">${e}</span>`).join('')}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="alert alert-warn" style="margin-top:16px;">
+        ⚕️ Warm up for 5 minutes before starting and stop any exercise that causes pain. Consult a doctor before beginning if you have an existing condition.
+      </div>
+    </div>
+  `;
+  wrap.firstElementChild.style.animation = 'slideUp 0.4s ease both';
+}
+
+document.querySelectorAll('#goalTabs .tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#goalTabs .tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderWorkout(btn.dataset.goal);
+  });
+});
+
+renderWorkout('loss');
+</script>
+{% endblock %}

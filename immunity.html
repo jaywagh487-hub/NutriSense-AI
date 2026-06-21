@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% set active = "immunity" %}
+{% block title %}Immunity Booster Recipes — NutriSense AI{% endblock %}
+
+{% block body %}
+<div class="page-bg" style="background-image:url('https://images.unsplash.com/photo-1615485925600-97237c4fc1ec?w=1600');">
+  <div class="content" style="display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 62px);">
+    <div class="card card-wide reveal in-view">
+
+      <div class="eyebrow">Immunity Kitchen</div>
+      <h2 style="font-size:1.5rem;font-weight:800;color:var(--green-900);margin-bottom:4px;">🍵 Immunity Booster Recipes</h2>
+      <p style="color:var(--text-soft);margin-bottom:6px;">Traditional Indian preparations to support immunity — Kadha, golden milk, and amla shots.</p>
+
+      <div class="tab-bar" id="recipeTabs">
+        <button class="tab active" data-r="kadha">🍵 Kadha</button>
+        <button class="tab" data-r="goldenmilk">🥛 Golden Milk</button>
+        <button class="tab" data-r="amla">🍋 Amla Shot</button>
+      </div>
+
+      <div id="recipeResult"></div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const recipeData = {
+  kadha: {
+    title: "Immunity Kadha",
+    tagline: "A warming spiced decoction — a household remedy across India during cold/flu season.",
+    servings: "Makes 2 cups",
+    ingredients: [
+      "2 cups water",
+      "1 inch ginger, crushed",
+      "4–5 black pepper corns",
+      "2–3 tulsi (holy basil) leaves",
+      "1 small cinnamon stick",
+      "2 cloves",
+      "1 tsp jaggery (optional, to taste)",
+      "Juice of half a lemon"
+    ],
+    steps: [
+      "Add water, ginger, black pepper, cinnamon, and cloves to a pan.",
+      "Bring to a boil, then simmer on low heat for 8–10 minutes.",
+      "Add tulsi leaves in the last 2 minutes of simmering.",
+      "Strain into cups, stir in jaggery if using.",
+      "Add lemon juice just before drinking (don't boil the lemon)."
+    ],
+    benefit: "Ginger and black pepper support digestion and circulation; tulsi and cinnamon are traditionally used for respiratory and immune support."
+  },
+  goldenmilk: {
+    title: "Golden Milk (Haldi Doodh)",
+    tagline: "Warm turmeric milk, traditionally taken at bedtime, especially in colder months.",
+    servings: "Makes 1 cup",
+    ingredients: [
+      "1 cup milk (dairy or plant-based)",
+      "½ tsp turmeric powder",
+      "Pinch of black pepper",
+      "Pinch of cinnamon powder",
+      "½ tsp ghee (optional)",
+      "Honey or jaggery to taste (add after cooling slightly)"
+    ],
+    steps: [
+      "Warm the milk in a small pan over low-medium heat — don't let it boil hard.",
+      "Whisk in turmeric, black pepper, and cinnamon.",
+      "Simmer gently for 3–4 minutes, stirring occasionally.",
+      "Remove from heat, stir in ghee if using.",
+      "Let cool slightly, then sweeten with honey or jaggery to taste."
+    ],
+    benefit: "Turmeric's active compound is better absorbed with black pepper and a little fat (ghee) — this combination is intentional, not incidental."
+  },
+  amla: {
+    title: "Amla (Indian Gooseberry) Shot",
+    tagline: "A small, potent vitamin-C-rich shot, typically taken first thing in the morning.",
+    servings: "Makes 2 small shots",
+    ingredients: [
+      "4–5 fresh amla (Indian gooseberries), deseeded",
+      "½ inch ginger",
+      "½ cup water",
+      "Pinch of black salt",
+      "Pinch of roasted cumin powder (optional)"
+    ],
+    steps: [
+      "Blend amla, ginger, and water until smooth.",
+      "Strain through a fine sieve to remove pulp if a smoother shot is preferred.",
+      "Stir in black salt and cumin powder.",
+      "Drink fresh, on an empty stomach for best traditional effect.",
+      "Best consumed within the day — doesn't keep well refrigerated beyond 24 hours."
+    ],
+    benefit: "Amla is one of the richest natural sources of vitamin C among Indian foods, which supports general immune function as part of an overall balanced diet."
+  }
+};
+
+function renderRecipe(key) {
+  const d = recipeData[key];
+  const wrap = document.getElementById('recipeResult');
+  wrap.innerHTML = `
+    <div class="plan-card">
+      <div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:8px;margin-bottom:4px;">
+        <h3 style="color:var(--green-800);font-weight:700;">${d.title}</h3>
+        <span class="tag">${d.servings}</span>
+      </div>
+      <p style="color:var(--text-soft);font-size:0.88rem;margin-bottom:16px;">${d.tagline}</p>
+
+      <div style="display:grid;grid-template-columns:1fr 1.2fr;gap:20px;">
+        <div>
+          <p style="font-size:0.82rem;font-weight:700;color:var(--text-mid);margin-bottom:8px;">Ingredients</p>
+          <div class="plan-foods" style="flex-direction:column;align-items:flex-start;">
+            ${d.ingredients.map(i => `<span class="food-chip" style="display:block;">${i}</span>`).join('')}
+          </div>
+        </div>
+        <div>
+          <p style="font-size:0.82rem;font-weight:700;color:var(--text-mid);margin-bottom:8px;">Method</p>
+          ${d.steps.map((s, i) => `<div class="plan-tip"><span class="plan-tip-icon">${i+1}.</span><div>${s}</div></div>`).join('')}
+        </div>
+      </div>
+
+      <div class="lifestyle-tip" style="margin-top:16px;">${d.benefit}</div>
+    </div>
+  `;
+  wrap.firstElementChild.style.animation = 'slideUp 0.4s ease both';
+}
+
+document.querySelectorAll('#recipeTabs .tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#recipeTabs .tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderRecipe(btn.dataset.r);
+  });
+});
+
+renderRecipe('kadha');
+</script>
+{% endblock %}

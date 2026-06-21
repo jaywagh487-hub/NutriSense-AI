@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}NutriSense AI{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥗</text></svg>">
+</head>
+
+<body>
+
+  <nav>
+    <a href="/" class="nav-brand">
+      🥗 NutriSense <span class="brand-dot"></span>
+    </a>
+    <div class="nav-links">
+      <a href="/"           {% if active=='home'       %}class="active"{% endif %}>Home</a>
+      <a href="/form"       {% if active=='form'       %}class="active"{% endif %}>Analysis</a>
+      <a href="/dashboard"  {% if active=='dashboard'  %}class="active"{% endif %}>Dashboard</a>
+      <a href="/nutrients"  {% if active=='nutrients'  %}class="active"{% endif %}>🧬 Nutrients</a>
+      <a href="/bmi"        {% if active=='bmi'        %}class="active"{% endif %}>BMI</a>
+      <a href="/weightloss" {% if active=='weightloss' %}class="active"{% endif %}>Weight Loss</a>
+      <a href="/weightgain" {% if active=='weightgain' %}class="active"{% endif %}>Weight Gain</a>
+      <a href="/haircare"   {% if active=='haircare'   %}class="active"{% endif %}>Hair Care</a>
+      <a href="/skincare"   {% if active=='skincare'   %}class="active"{% endif %}>Skin Care</a>
+
+      <div class="nav-dropdown">
+        <button type="button" class="nav-dropdown-toggle {% if active in ['seasonal','protein','workout','yoga','steps','immunity','resources'] %}active{% endif %}">
+          More ▾
+        </button>
+        <div class="nav-dropdown-menu">
+          <a href="/seasonal"  {% if active=='seasonal'  %}class="active"{% endif %}>🍉 Seasonal Food Guide</a>
+          <a href="/protein"   {% if active=='protein'   %}class="active"{% endif %}>🌱 Protein Calculator</a>
+          <a href="/workout"   {% if active=='workout'   %}class="active"{% endif %}>🏋️ Home Workout Planner</a>
+          <a href="/yoga"      {% if active=='yoga'      %}class="active"{% endif %}>🧘 Yoga for Deficiencies</a>
+          <a href="/steps"     {% if active=='steps'     %}class="active"{% endif %}>🚶 Step Goal Tracker</a>
+          <a href="/immunity"  {% if active=='immunity'  %}class="active"{% endif %}>🍵 Immunity Recipes</a>
+          <a href="/resources" {% if active=='resources' %}class="active"{% endif %}>📺 Video & Official Resources</a>
+        </div>
+      </div>
+
+      <a href="/feedback"   {% if active=='feedback'   %}class="active"{% endif %}>Feedback</a>
+    </div>
+  </nav>
+
+  {% block body %}
+  <div class="{% block body_class %}content-plain{% endblock %}">
+    {% block content %}{% endblock %}
+  </div>
+  {% endblock %}
+
+  <footer>
+    © 2025 <span>NutriSense AI</span> · Intelligent Nutrition Platform · Made with 💚
+  </footer>
+
+  <script src="/static/script.js" defer></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% set active = "skincare" %}
+{% block title %}Skin Care — NutriSense AI{% endblock %}
+
+{% block body %}
+<div class="page-bg" style="background-image:url('https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=1600');">
+  <div class="content" style="display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 62px);">
+    <div class="card reveal in-view">
+
+      <div class="eyebrow">Skin Health</div>
+      <h2 style="font-size:1.5rem;font-weight:800;color:var(--green-900);margin-bottom:4px;">💆 Skin Care Solutions</h2>
+      <p style="color:var(--text-soft);margin-bottom:20px;">Select your skin concern for a personalised nutrition and skincare routine.</p>
+
+      <div class="care-select-wrap">
+        <select id="skinProblem">
+          <option value="">— Select your skin concern —</option>
+          <option value="acne">Acne & Pimples</option>
+          <option value="dry_skin">Dry & Flaky Skin</option>
+          <option value="pigmentation">Dark Spots & Pigmentation</option>
+          <option value="dull_skin">Dull & Tired-Looking Skin</option>
+          <option value="oily_skin">Oily & Shiny Skin</option>
+          <option value="ageing">Early Ageing & Fine Lines</option>
+        </select>
+      </div>
+
+      <div id="skinResult" style="display:none;" class="plan-card">
+        <h3 id="srTitle" style="color:var(--green-800);font-weight:700;margin-bottom:14px;"></h3>
+        <div id="srTips"></div>
+        <p style="font-size:0.82rem;font-weight:700;color:var(--text-mid);margin:14px 0 8px;">Recommended Foods</p>
+        <div id="srFoods" class="plan-foods"></div>
+        <div class="video-wrap"><iframe id="srVideo" allowfullscreen></iframe></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const skinData = {
+  acne: {
+    title: "Acne & Pimples — Clearing Plan",
+    tips: [
+      ["🧴","Cleanse gently twice daily. Over-washing strips skin and worsens breakouts."],
+      ["☀️","Use a non-comedogenic SPF 30+ sunscreen daily."],
+      ["🚫","Avoid touching your face and popping pimples."],
+      ["🥗","Cut dairy and high-glycaemic foods. They spike insulin and acne."],
+      ["💧","Drink 8+ glasses of water to flush toxins."]
+    ],
+    foods: ["Green Tea","Turmeric","Tomatoes","Vegetables","Cucumber","Probiotics","Zinc-rich foods"],
+    video: "https://www.youtube.com/embed/Jt1F1Rz3b1Y"
+  },
+  dry_skin: {
+    title: "Dry & Flaky Skin — Hydration Plan",
+    tips: [
+      ["🧴","Moisturise within 3 minutes of bathing to lock in hydration."],
+      ["🛁","Use lukewarm (not hot) water. Hot water strips natural oils."],
+      ["🌬️","Use a humidifier in AC or dry environments."],
+      ["🥑","Eat foods rich in healthy fats — avocado, ghee, nuts."]
+    ],
+    foods: ["Almonds","Walnuts","Avocado","Milk","Ghee","Sweet Potato","Cucumber"],
+    video: "https://www.youtube.com/embed/XTXCQc5KpZY"
+  },
+  pigmentation: {
+    title: "Pigmentation — Brightening Plan",
+    tips: [
+      ["☀️","Apply broad-spectrum SPF 50 every morning — sun is the top cause."],
+      ["🍋","Vitamin C serum in the morning helps fade spots gradually."],
+      ["🌸","Exfoliate gently 1–2x/week to promote cell turnover."],
+      ["💧","Stay hydrated. Dehydrated skin looks darker and duller."]
+    ],
+    foods: ["Oranges","Tomatoes","Papaya","Kiwi","Bell Peppers","Amla","Berries"],
+    video: "https://www.youtube.com/embed/mCJdC75S6Fw"
+  },
+  dull_skin: {
+    title: "Dull Skin — Glow-Up Plan",
+    tips: [
+      ["😴","Get 7–9 hours of quality sleep. Skin repairs itself overnight."],
+      ["🏃","Exercise boosts circulation — gives natural glow within weeks."],
+      ["🧴","Exfoliate once a week with a gentle scrub."],
+      ["🥗","Eat the rainbow — colourful produce = skin-loving antioxidants."]
+    ],
+    foods: ["Berries","Pomegranate","Turmeric Milk","Carrots","Spinach","Watermelon"],
+    video: "https://www.youtube.com/embed/-MkjeHYFj1Q"
+  },
+  oily_skin: {
+    title: "Oily Skin — Balancing Plan",
+    tips: [
+      ["🧴","Use a gentle, foaming cleanser. Avoid harsh soaps."],
+      ["💧","Paradoxically, hydrate well — dehydrated skin overproduces oil."],
+      ["🌿","Use niacinamide serum — reduces sebum production."],
+      ["🥗","Limit fried, spicy, and sugary foods."]
+    ],
+    foods: ["Green Tea","Cucumber","Lemon Water","Whole Grains","Zinc-rich foods","Pumpkin Seeds"],
+    video: "https://www.youtube.com/embed/BBZUqrMP8BE"
+  },
+  ageing: {
+    title: "Early Ageing — Anti-Ageing Plan",
+    tips: [
+      ["☀️","Sunscreen is the single most effective anti-ageing product — use daily."],
+      ["🫒","Retinol or bakuchiol at night promotes collagen production."],
+      ["🥛","Collagen-boosting foods like bone broth and vitamin C are key."],
+      ["🧘","Manage stress. Cortisol accelerates skin ageing."]
+    ],
+    foods: ["Almonds","Vitamin C foods","Bone Broth","Dark Chocolate","Green Tea","Amla","Turmeric"],
+    video: "https://www.youtube.com/embed/mCJdC75S6Fw"
+  }
+};
+
+document.getElementById('skinProblem').addEventListener('change', function() {
+  const val = this.value;
+  const result = document.getElementById('skinResult');
+  if (!val || !skinData[val]) { result.style.display = 'none'; return; }
+
+  const d = skinData[val];
+  document.getElementById('srTitle').textContent = d.title;
+  document.getElementById('srTips').innerHTML = d.tips.map(([icon, text]) =>
+    `<div class="plan-tip"><span class="plan-tip-icon">${icon}</span><div>${text}</div></div>`
+  ).join('');
+  document.getElementById('srFoods').innerHTML = d.foods.map(f =>
+    `<span class="food-chip">🌿 ${f}</span>`
+  ).join('');
+  document.getElementById('srVideo').src = d.video;
+  result.style.display = 'block';
+  result.style.animation = 'slideUp 0.4s ease both';
+});
+</script>
+{% endblock %}
