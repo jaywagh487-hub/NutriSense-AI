@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% set active = "feedback" %}
+{% block title %}Feedback — NutriSense AI{% endblock %}
+
+{% block body %}
+<div class="page-bg" style="background-image:url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1600');">
+  <div class="content" style="display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 62px);">
+    <div class="card card-sm reveal in-view">
+
+      <div class="eyebrow">We value your opinion</div>
+      <h2 style="font-size:1.5rem;font-weight:800;color:var(--green-900);margin-bottom:4px;">✉️ Share Feedback</h2>
+      <p style="color:var(--text-soft);margin-bottom:20px;">Help us make NutriSense AI better for everyone.</p>
+
+      {% if not submitted %}
+      <form method="post">
+
+        <div class="form-group">
+          <label>Your Name</label>
+          <input type="text" name="name" placeholder="Priya Sharma" required>
+        </div>
+
+        <div class="form-group">
+          <label>Rate Your Experience</label>
+          <div class="star-rating" id="starRating">
+            {% for i in range(1, 6) %}
+            <span class="star" data-val="{{ i }}">⭐</span>
+            {% endfor %}
+          </div>
+          <input type="hidden" name="rating" id="ratingInput" value="5">
+        </div>
+
+        <div class="form-group">
+          <label>What did you like most?</label>
+          <select name="liked">
+            <option value="ui">Clean & easy interface</option>
+            <option value="deficiency">Deficiency analysis</option>
+            <option value="diet">Diet recommendations</option>
+            <option value="bmi">BMI calculator</option>
+            <option value="care">Hair / Skin care tips</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Your Feedback</label>
+          <textarea name="feedback" placeholder="Tell us what you think, what could be improved, or features you'd like to see..." required></textarea>
+        </div>
+
+        <button class="btn btn-block" type="submit">Send Feedback 🚀</button>
+
+      </form>
+      {% else %}
+      <div class="feedback-success">
+        <div style="font-size:3rem;">🎉</div>
+        <h3 style="color:var(--green-700);font-weight:700;margin:10px 0 6px;">Thank You!</h3>
+        <p style="color:var(--text-soft);">Your feedback means a lot. We'll use it to improve NutriSense AI.</p>
+        <a href="/dashboard" class="btn" style="margin-top:16px;display:inline-flex;">Back to Dashboard</a>
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const stars = document.querySelectorAll('.star');
+const ratingInput = document.getElementById('ratingInput');
+
+if (stars.length) {
+  stars.forEach((star, i) => {
+    star.addEventListener('click', () => {
+      ratingInput.value = i + 1;
+      stars.forEach((s, j) => s.classList.toggle('active', j <= i));
+    });
+    star.addEventListener('mouseover', () => {
+      stars.forEach((s, j) => s.style.filter = j <= i ? 'grayscale(0)' : 'grayscale(1)');
+    });
+  });
+  document.getElementById('starRating').addEventListener('mouseleave', () => {
+    const val = parseInt(ratingInput.value) - 1;
+    stars.forEach((s, j) => s.style.filter = j <= val ? 'grayscale(0)' : 'grayscale(1)');
+  });
+  // default all stars active
+  stars.forEach(s => s.classList.add('active'));
+}
+</script>
+{% endblock %}

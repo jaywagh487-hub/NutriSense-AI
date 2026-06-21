@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% set active = "seasonal" %}
+{% block title %}Seasonal Food Guide — NutriSense AI{% endblock %}
+
+{% block body %}
+<div class="page-bg" style="background-image:url('https://images.unsplash.com/photo-1610832958506-aa56368176cf?w=1600');">
+  <div class="content" style="display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 62px);">
+    <div class="card card-wide reveal in-view">
+
+      <div class="eyebrow">Seasonal Eating</div>
+      <h2 style="font-size:1.5rem;font-weight:800;color:var(--green-900);margin-bottom:4px;">🍉 Seasonal Food Guide</h2>
+      <p style="color:var(--text-soft);margin-bottom:6px;">Eat with the Indian seasons — what to favour and what to limit, as the weather changes.</p>
+
+      <div class="tab-bar" id="seasonTabs">
+        <button class="tab active" data-season="summer">☀️ Summer</button>
+        <button class="tab" data-season="monsoon">🌧️ Monsoon</button>
+        <button class="tab" data-season="winter">❄️ Winter</button>
+      </div>
+
+      <div id="seasonResult"></div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const seasonData = {
+  summer: {
+    title: "Summer — Cool & Hydrating",
+    desc: "Peak heat months (April–June) call for light, water-rich, easily digestible food that keeps the body cool from within.",
+    eat: ["Watermelon","Cucumber","Buttermilk (Chaas)","Coconut Water","Mint","Curd","Lemon Water","Muskmelon","Bottle Gourd","Onion (raw)","Sattu Drink","Pomegranate"],
+    avoid: ["Fried Snacks","Excess Tea/Coffee","Spicy Curries","Red Meat (heavy)","Alcohol"],
+    tips: [
+      ["💧","Drink water through the day rather than large amounts at once — sip steadily."],
+      ["🌅","Avoid stepping out during peak sun (12pm–4pm); if needed, cover up and hydrate before/after."],
+      ["🥒","Favour raw salads and seasonal fruits with high water content."],
+      ["🧂","Add a pinch of rock salt + lemon to drinking water to replace lost electrolytes."]
+    ]
+  },
+  monsoon: {
+    title: "Monsoon — Light & Immunity-Focused",
+    desc: "Humidity (July–September) slows digestion and raises infection risk, so the focus shifts to warm, freshly-cooked, immunity-supportive food.",
+    eat: ["Warm Soups","Turmeric Milk","Garlic","Ginger Tea","Moong Dal Khichdi","Steamed Vegetables","Bitter Gourd","Black Pepper Rasam","Jaggery","Tulsi Tea"],
+    avoid: ["Street Food / Cut Fruits","Leafy Greens (unwashed)","Seafood","Carbonated Drinks","Excess Dairy"],
+    tips: [
+      ["🍲","Eat freshly cooked, warm meals — avoid leftovers and raw salads, as bacterial growth is faster in humidity."],
+      ["🧄","Cook with ginger, garlic, turmeric and black pepper — natural anti-microbial and digestive support."],
+      ["💧","Boil or filter drinking water carefully; waterborne infections peak this season."],
+      ["🦟","Keep surroundings dry to avoid mosquito-borne illness alongside dietary care."]
+    ]
+  },
+  winter: {
+    title: "Winter — Warming & Nourishing",
+    desc: "Cold months (November–February) suit heavier, warming, nutrient-dense foods that support immunity and joint health.",
+    eat: ["Til (Sesame) Ladoo","Jaggery","Ghee","Carrots","Spinach","Methi (Fenugreek)","Dry Fruits","Bajra Roti","Soups","Turmeric Milk (Haldi Doodh)","Groundnuts","Beetroot"],
+    avoid: ["Cold Drinks/Ice Cream","Excess Raw Salads","Refrigerated Leftovers"],
+    tips: [
+      ["🌞","Get morning sunlight for 15–20 minutes — winter is a common time for vitamin D dips."],
+      ["🥜","Include nuts and sesame/jaggery preparations for sustained warmth and energy."],
+      ["🫖","Warm herbal teas (ginger, tulsi, cinnamon) support digestion and immunity."],
+      ["🧣","Pair warming foods with adequate layering — diet alone won't offset cold exposure."]
+    ]
+  }
+};
+
+function renderSeason(key) {
+  const d = seasonData[key];
+  const wrap = document.getElementById('seasonResult');
+  wrap.innerHTML = `
+    <div class="plan-card">
+      <h3 style="color:var(--green-800);font-weight:700;margin-bottom:6px;">${d.title}</h3>
+      <p style="color:var(--text-soft);font-size:0.88rem;margin-bottom:16px;">${d.desc}</p>
+
+      <p style="font-size:0.82rem;font-weight:700;color:var(--text-mid);margin-bottom:8px;">✅ Favour These</p>
+      <div class="plan-foods">${d.eat.map(f => `<span class="food-chip">🌿 ${f}</span>`).join('')}</div>
+
+      <p style="font-size:0.82rem;font-weight:700;color:var(--text-mid);margin:16px 0 8px;">🚫 Limit These</p>
+      <div class="plan-foods">${d.avoid.map(f => `<span class="tag" style="background:#fef3c7;color:#92400e;border-color:#fde68a;">${f}</span>`).join('')}</div>
+
+      <p style="font-size:0.82rem;font-weight:700;color:var(--text-mid);margin:16px 0 4px;">Lifestyle Tips</p>
+      ${d.tips.map(([icon, text]) => `<div class="plan-tip"><span class="plan-tip-icon">${icon}</span><div>${text}</div></div>`).join('')}
+    </div>
+  `;
+  wrap.firstElementChild.style.animation = 'slideUp 0.4s ease both';
+}
+
+document.querySelectorAll('#seasonTabs .tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#seasonTabs .tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderSeason(btn.dataset.season);
+  });
+});
+
+renderSeason('summer');
+</script>
+{% endblock %}

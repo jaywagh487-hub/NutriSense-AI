@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+{% set active = "nutrients" %}
+{% block title %}Vitamin & Mineral Encyclopedia — NutriSense AI{% endblock %}
+
+{% block body %}
+
+<section class="nutrient-hero">
+  <div class="ambient-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+  </div>
+  <div class="inner">
+    <div class="eyebrow" style="color:rgba(255,255,255,0.8);">Nutrition Encyclopedia</div>
+    <h1>🧬 Vitamin & Mineral Guide</h1>
+    <p>Every essential vitamin and mineral — daily requirement, deficiency warning signs, and the best Indian food sources to fix or prevent a gap.</p>
+
+    <div class="nutrient-search-bar">
+      <span class="icon">🔍</span>
+      <input type="text" id="nutrientSearch" placeholder="Search e.g. Iron, Vitamin D, Zinc, Calcium...">
+    </div>
+
+    <div class="nutrient-filter-row" id="nutrientFilters">
+      <button class="nutrient-filter-chip active" data-filter="all">All ({{ nutrients|length }})</button>
+      <button class="nutrient-filter-chip" data-filter="vitamin">Vitamins</button>
+      <button class="nutrient-filter-chip" data-filter="mineral">Minerals</button>
+    </div>
+  </div>
+</section>
+
+<div class="nutrient-body">
+  <div class="nutrient-grid" id="nutrientGrid">
+    {% for n in nutrients %}
+    <div class="nutrient-card cat-{{ n.category }}" data-name="{{ n.name|lower }}" data-cat="{{ n.category }}" data-key="{{ n.key }}">
+      <div class="nutrient-card-top">
+        <div class="nutrient-card-icon" style="{{ n.icon_bg }}">{{ n.icon }}</div>
+        <div>
+          <h4>{{ n.name }}</h4>
+          <div class="sub">{{ n.also_known or n.category|title }}</div>
+        </div>
+      </div>
+      <div class="nutrient-card-body">
+        <div class="nutrient-rda">📏 RDA: {{ n.rda }}</div>
+        <p class="desc">{{ n.short }}</p>
+        <div class="nutrient-mini-label">Top Food Sources</div>
+        <div class="nutrient-card-foods">
+          {% for f in n.foods[:5] %}<span class="food-chip">{{ f }}</span>{% endfor %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <p id="noResults" style="display:none;text-align:center;color:var(--text-mute);padding:40px 0;">No nutrient matches that search. Try "iron", "B12", or "calcium".</p>
+</div>
+
+<!-- Detail overlay -->
+<div class="nutrient-detail-overlay" id="nutrientOverlay">
+  <div class="nutrient-detail-panel" id="nutrientPanel">
+    <!-- filled by JS -->
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+const nutrientData = {{ nutrients_json | safe }};
+
+const grid = document.getElementById('nutrientGrid');
+const searchInput = document.getElementById('nutrientSearch');
+const filterChips = document.querySelectorAll('.nutrient-filter-chip');
+const noResults = document.getElementById('noResults');
+let activeFilter = 'all';
+
+function applyFilters() {
+  const q = searchInput.value.trim().toLowerCase();
+  let visibleCount = 0;
+  document.querySelectorAll('.nutrient-card').forEach(card => {
+    const matchesFilter = activeFilter === 'all' || card.dataset.cat === activeFilter;
+    const matchesSearch = !q || card.dataset.name.includes(q);
+    const show = matchesFilter && matchesSearch;
+    card.style.display = show ? '' : 'none';
+    if (show) visibleCount++;
+  });
+  noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+}
+
+searchInput.addEventListener('input', applyFilters);
+
+filterChips.forEach(chip => {
+  chip.addEventListener('click', () => {
+    filterChips.forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    activeFilter = chip.dataset.filter;
+    applyFilters();
+  });
+});
+
+// Detail modal
+const overlay = document.getElementById('nutrientOverlay');
+const panel = document.getElementById('nutrientPanel');
+
+function openNutrient(key) {
+  const n = nutrientData.find(x => x.key === key);
+  if (!n) return;
+
+  panel.innerHTML = `
+    <button class="nutrient-detail-close" id="closeDetail">✕</button>
+    <div class="nutrient-detail-head">
+      <div class="nutrient-card-icon" style="${n.icon_bg}">${n.icon}</div>
+      <div>
+        <h3>${n.name}</h3>
+        <div class="sub">${n.also_known || ''}</div>
+      </div>
+    </div>
+
+    <div class="nutrient-detail-section">
+      <div class="label">📏 Recommended Daily Allowance</div>
+      <p><strong>${n.rda}</strong></p>
+    </div>
+
+    <div class="nutrient-detail-section">
+      <div class="label">ℹ️ Why your body needs it</div>
+      <p>${n.long}</p>
+    </div>
+
+    <div class="nutrient-detail-section">
+      <div class="label">⚠️ Deficiency warning signs</div>
+      <div class="deficiency-symptom-list">
+        ${n.deficiency_signs.map(s => `<span class="tag symptom">${s}</span>`).join('')}
+      </div>
+    </div>
+
+    <div class="nutrient-detail-section">
+      <div class="label">🌿 Best Indian food sources</div>
+      <div class="food-chips">
+        ${n.foods.map(f => `<span class="food-chip">${f}</span>`).join('')}
+      </div>
+    </div>
+
+    <div class="nutrient-detail-section">
+      <div class="label">💡 Absorption tip</div>
+      <p>${n.tip}</p>
+    </div>
+
+    <div class="nutrient-detail-section" style="margin-bottom:6px;">
+      <div class="label">📺 Watch & Learn</div>
+      <div class="video-wrap"><iframe src="${n.video}" allowfullscreen loading="lazy"></iframe></div>
+    </div>
+
+    <div class="nutrient-detail-section" style="margin-bottom:0;">
+      <div class="label">🏛️ Official Reference</div>
+      <a href="${n.official_url}" target="_blank" rel="noopener" class="official-card" style="margin-top:4px;">
+        <div class="ic">🔗</div>
+        <div><h5>${n.official_name}</h5><p>${n.official_desc}</p></div>
+        <span class="go">↗</span>
+      </a>
+    </div>
+  `;
+  overlay.classList.add('open');
+  document.getElementById('closeDetail').addEventListener('click', closeNutrient);
+}
+
+function closeNutrient() {
+  overlay.classList.remove('open');
+}
+
+overlay.addEventListener('click', (e) => {
+  if (e.target === overlay) closeNutrient();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeNutrient();
+});
+
+document.querySelectorAll('.nutrient-card').forEach(card => {
+  card.addEventListener('click', () => openNutrient(card.dataset.key));
+});
+</script>
+{% endblock %}

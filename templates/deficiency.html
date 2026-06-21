@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% set active = "form" %}
+{% block title %}Deficiency Guide — NutriSense AI{% endblock %}
+
+{% block body %}
+<div class="content-plain" style="background:linear-gradient(160deg, var(--ivory), var(--green-50)); position:relative; overflow:hidden;">
+  <div class="ambient-blobs"><div class="blob blob-1"></div><div class="blob blob-3"></div></div>
+  <div style="max-width:1000px;margin:0 auto;position:relative;z-index:1;">
+
+    <div class="reveal in-view" style="margin-bottom:24px;">
+      <div class="eyebrow">Nutrition Encyclopedia</div>
+      <h2 style="font-size:1.7rem;font-weight:800;color:var(--green-900);margin-bottom:6px;">🥗 Deficiency Guide</h2>
+      <p style="color:var(--text-soft);">Explore each deficiency — symptoms, Indian food remedies, and lifestyle tips.</p>
+    </div>
+
+    <div class="deficiency-grid reveal-stagger in-view">
+      {% for name, info in deficiencies.items() %}
+      <div class="deficiency-card tilt-hover">
+        <h4>{{ name }}</h4>
+
+        <p style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-mute);margin:8px 0 5px;">Symptoms</p>
+        <div class="tag-list">
+          {% for s in info.symptoms %}<span class="tag symptom">{{ s | title }}</span>{% endfor %}
+        </div>
+
+        <p style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-mute);margin:10px 0 5px;">Recommended Foods</p>
+        <div class="food-chips">
+          {% for f in info.foods %}<span class="food-chip">{{ f }}</span>{% endfor %}
+        </div>
+
+        <div class="lifestyle-tip">💡 {{ info.lifestyle }}</div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="reveal in-view" style="text-align:center;margin-top:32px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+      <a href="/symptoms" class="btn">🩺 Check Your Symptoms →</a>
+      <a href="/nutrients" class="btn-outline">🧬 Full Vitamin & Mineral Guide</a>
+      <a href="/resources" class="btn-outline">📺 Videos & Official Sources</a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

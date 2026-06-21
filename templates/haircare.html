@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% set active = "haircare" %}
+{% block title %}Hair Care — NutriSense AI{% endblock %}
+
+{% block body %}
+<div class="page-bg" style="background-image:url('https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=1600');">
+  <div class="content" style="display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 62px);">
+    <div class="card reveal in-view">
+
+      <div class="eyebrow">Hair Health</div>
+      <h2 style="font-size:1.5rem;font-weight:800;color:var(--green-900);margin-bottom:4px;">💇 Hair Care Solutions</h2>
+      <p style="color:var(--text-soft);margin-bottom:20px;">Select your hair concern to get food recommendations and expert tips.</p>
+
+      <div class="care-select-wrap">
+        <select id="hairProblem">
+          <option value="">— Select your hair problem —</option>
+          <option value="hairfall">Hair Fall</option>
+          <option value="dryness">Dry & Rough Hair</option>
+          <option value="dandruff">Dandruff</option>
+          <option value="split_ends">Split Ends</option>
+          <option value="oily">Oily Scalp</option>
+          <option value="thinning">Hair Thinning</option>
+        </select>
+      </div>
+
+      <div id="hairResult" style="display:none;" class="plan-card">
+        <h3 id="hrTitle" style="color:var(--green-800);font-weight:700;margin-bottom:14px;"></h3>
+        <div id="hrTips"></div>
+        <p style="font-size:0.82rem;font-weight:700;color:var(--text-mid);margin:14px 0 8px;">Recommended Foods</p>
+        <div id="hrFoods" class="plan-foods"></div>
+        <div class="video-wrap"><iframe id="hrVideo" allowfullscreen></iframe></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const hairData = {
+  hairfall: {
+    title: "Hair Fall — Strengthening Plan",
+    tips: [
+      ["🫒","Oil massage with warm coconut or castor oil twice a week."],
+      ["🥚","Increase protein intake — eggs, dal, paneer are essential."],
+      ["🧘","Reduce stress with meditation. Stress is a major cause of hair fall."],
+      ["🚿","Wash hair 2–3x per week with a mild sulphate-free shampoo."],
+      ["💊","Check iron & B12 levels — deficiency is a hidden cause."]
+    ],
+    foods: ["Eggs","Spinach","Jaggery","Almonds","Milk","Paneer","Sesame Seeds"],
+    video: "https://www.youtube.com/embed/VkK1A5g1D9k"
+  },
+  dryness: {
+    title: "Dry Hair — Hydration & Nourishment",
+    tips: [
+      ["🥥","Deep condition with coconut or argan oil weekly."],
+      ["🌡️","Avoid heat styling tools or use a heat protectant."],
+      ["💧","Drink 8–10 glasses of water daily for hydration from within."],
+      ["🧴","Use a moisturising, sulphate-free shampoo and conditioner."]
+    ],
+    foods: ["Coconut","Almonds","Avocado","Milk","Walnuts","Ghee"],
+    video: "https://www.youtube.com/embed/VkK1A5g1D9k"
+  },
+  dandruff: {
+    title: "Dandruff — Scalp Health Plan",
+    tips: [
+      ["🧴","Use a ketoconazole anti-dandruff shampoo 2x/week."],
+      ["🌿","Apply diluted tea tree oil or neem paste to the scalp."],
+      ["🚫","Avoid sugary and fried foods — they worsen dandruff."],
+      ["🧼","Rinse thoroughly. Product buildup worsens flaking."]
+    ],
+    foods: ["Yogurt","Fenugreek Seeds","Garlic","Ginger","Omega-3 rich foods"],
+    video: "https://www.youtube.com/embed/VkK1A5g1D9k"
+  },
+  split_ends: {
+    title: "Split Ends — Repair Plan",
+    tips: [
+      ["✂️","Trim ends every 6–8 weeks. There's no product that repairs split ends."],
+      ["🚫","Avoid excessive heat — air dry where possible."],
+      ["🫒","Apply a small amount of oil to the tips after washing."],
+      ["🥛","Increase Vitamin E and protein intake."]
+    ],
+    foods: ["Almonds","Sunflower Seeds","Eggs","Fish","Whole Grains"],
+    video: "https://www.youtube.com/embed/VkK1A5g1D9k"
+  },
+  oily: {
+    title: "Oily Scalp — Balancing Plan",
+    tips: [
+      ["🧴","Wash hair every 2 days with a clarifying shampoo."],
+      ["🚫","Avoid over-conditioning — apply conditioner to ends only."],
+      ["🥗","Reduce fried, spicy foods that stimulate sebum production."],
+      ["🖐️","Avoid touching your scalp frequently."]
+    ],
+    foods: ["Green Tea","Cucumber","Lemon Water","Zinc-rich foods","Pumpkin Seeds"],
+    video: "https://www.youtube.com/embed/VkK1A5g1D9k"
+  },
+  thinning: {
+    title: "Hair Thinning — Volume Boost Plan",
+    tips: [
+      ["💊","Check vitamin D, iron, and thyroid levels first."],
+      ["🌿","Use rosemary oil — shown to be as effective as minoxidil in studies."],
+      ["🥩","Prioritise protein: 1g per kg body weight daily."],
+      ["🧘","Manage stress. High cortisol shrinks hair follicles."]
+    ],
+    foods: ["Eggs","Lentils","Soybean","Pumpkin Seeds","Spinach","Biotin-rich foods"],
+    video: "https://www.youtube.com/embed/VkK1A5g1D9k"
+  }
+};
+
+document.getElementById('hairProblem').addEventListener('change', function() {
+  const val = this.value;
+  const result = document.getElementById('hairResult');
+  if (!val || !hairData[val]) { result.style.display = 'none'; return; }
+
+  const d = hairData[val];
+  document.getElementById('hrTitle').textContent = d.title;
+  document.getElementById('hrTips').innerHTML = d.tips.map(([icon, text]) =>
+    `<div class="plan-tip"><span class="plan-tip-icon">${icon}</span><div>${text}</div></div>`
+  ).join('');
+  document.getElementById('hrFoods').innerHTML = d.foods.map(f =>
+    `<span class="food-chip">🌿 ${f}</span>`
+  ).join('');
+  document.getElementById('hrVideo').src = d.video;
+  result.style.display = 'block';
+  result.style.animation = 'slideUp 0.4s ease both';
+});
+</script>
+{% endblock %}

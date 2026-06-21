@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+{% set active = "steps" %}
+{% block title %}Step Goal Tracker — NutriSense AI{% endblock %}
+
+{% block body %}
+<div class="content-plain" style="background:var(--green-50);">
+  <div class="card">
+
+    <div class="eyebrow">Daily Movement</div>
+    <h2 style="font-size:1.5rem;font-weight:800;color:var(--green-900);margin-bottom:4px;">🚶 Step Goal Tracker</h2>
+    <p style="color:var(--text-soft);margin-bottom:20px;">Set a daily step goal and log your progress. Saved on this device.</p>
+
+    <div style="display:grid;grid-template-columns:1fr auto;gap:14px;align-items:end;margin-bottom:18px;">
+      <div class="form-group" style="margin-bottom:0;">
+        <label>Daily Step Goal</label>
+        <input type="number" id="stepGoalInput" placeholder="8000" min="1000" max="50000" step="500">
+      </div>
+      <button class="btn" id="setGoalBtn" type="button">Set Goal</button>
+    </div>
+
+    <div id="stepTrackerArea" style="display:none;">
+
+      <div style="text-align:center;margin:20px 0;">
+        <div class="bmi-ring normal" id="stepRing" style="width:160px;height:160px;font-size:1.3rem;">
+          <span id="stepRingPct">0%</span>
+        </div>
+        <p style="color:var(--text-soft);font-size:0.9rem;"><strong id="stepTodayVal">0</strong> / <span id="stepGoalVal">0</span> steps today</p>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;">
+        <div class="form-group" style="margin-bottom:0;">
+          <label>Log Steps for Today</label>
+          <input type="number" id="stepLogInput" placeholder="e.g. 3200" min="0" max="100000">
+        </div>
+        <div style="display:flex;align-items:end;">
+          <button class="btn btn-block" id="addStepsBtn" type="button">➕ Add to Today</button>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;">
+        <button class="btn-outline" id="resetTodayBtn" type="button">Reset Today</button>
+        <button class="btn-outline" id="clearAllBtn" type="button">Clear All History</button>
+      </div>
+
+      <p style="font-size:0.82rem;font-weight:700;color:var(--text-mid);margin-bottom:10px;">Last 7 Days</p>
+      <div id="stepHistory" style="display:flex;flex-direction:column;gap:8px;"></div>
+
+    </div>
+
+    <div class="alert alert-info" style="margin-top:18px;">
+      💡 Data is stored only on this browser/device. Clearing browser data will reset your history.
+    </div>
+
+    <div class="resource-section-title" style="margin-top:30px;font-size:1.1rem;">📺 Learn More About Walking & Daily Movement</div>
+    <div class="video-grid">
+      <div class="video-card">
+        <div class="video-wrap"><iframe src="https://www.youtube.com/embed/jiVbcUE5DPU" allowfullscreen loading="lazy"></iframe></div>
+        <div class="video-card-info"><h5>Why Walking 10,000 Steps Matters</h5><span>Health Education</span></div>
+      </div>
+      <div class="video-card">
+        <div class="video-wrap"><iframe src="https://www.youtube.com/embed/Hu1plUSXcKY" allowfullscreen loading="lazy"></iframe></div>
+        <div class="video-card-info"><h5>Daily Movement & Circulation</h5><span>Health Education</span></div>
+      </div>
+    </div>
+
+    <div class="official-grid" style="margin-top:14px;">
+      <a href="https://www.who.int/news-room/fact-sheets/detail/physical-activity" target="_blank" rel="noopener" class="official-card">
+        <div class="ic">🌍</div>
+        <div><h5>WHO — Physical Activity Guidelines</h5><p>Recommended daily activity levels for adults, by the World Health Organization.</p></div>
+        <span class="go">↗</span>
+      </a>
+      <a href="/resources" class="official-card">
+        <div class="ic">📺</div>
+        <div><h5>More Video & Official Resources</h5><p>See the full curated resource library for nutrition and fitness.</p></div>
+        <span class="go">↗</span>
+      </a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const STORAGE_KEY = 'nutrisense_steps';
+const todayKey = () => new Date().toISOString().slice(0,10);
+
+function loadData() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || { goal: 0, days: {} };
+  } catch(e) { return { goal: 0, days: {} }; }
+}
+function saveData(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+let data = loadData();
+
+function refreshUI() {
+  const goal = data.goal || 0;
+  const today = data.days[todayKey()] || 0;
+  const pct = goal > 0 ? Math.min(100, Math.round((today / goal) * 100)) : 0;
+
+  document.getElementById('stepTodayVal').textContent = today.toLocaleString();
+  document.getElementById('stepGoalVal').textContent = goal.toLocaleString();
+  document.getElementById('stepRingPct').textContent = pct + '%';
+
+  const ring = document.getElementById('stepRing');
+  ring.className = 'bmi-ring ' + (pct >= 100 ? 'normal' : pct >= 50 ? 'overweight' : 'underweight');
+
+  // History — last 7 days including today
+  const histWrap = document.getElementById('stepHistory');
+  const days = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const key = d.toISOString().slice(0,10);
+    const label = i === 0 ? 'Today' : d.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric' });
+    days.push([label, data.days[key] || 0]);
+  }
+  histWrap.innerHTML = days.map(([label, steps]) => {
+    const p = goal > 0 ? Math.min(100, Math.round((steps/goal)*100)) : 0;
+    return `<div>
+      <div style="display:flex;justify-content:space-between;font-size:0.8rem;color:var(--text-mid);font-weight:600;margin-bottom:3px;">
+        <span>${label}</span><span>${steps.toLocaleString()} steps</span>
+      </div>
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${p}%;"></div></div>
+    </div>`;
+  }).join('');
+}
+
+if (data.goal > 0) {
+  document.getElementById('stepGoalInput').value = data.goal;
+  document.getElementById('stepTrackerArea').style.display = 'block';
+  refreshUI();
+}
+
+document.getElementById('setGoalBtn').addEventListener('click', () => {
+  const val = parseInt(document.getElementById('stepGoalInput').value);
+  if (!val || val <= 0) return;
+  data.goal = val;
+  saveData(data);
+  document.getElementById('stepTrackerArea').style.display = 'block';
+  refreshUI();
+});
+
+document.getElementById('addStepsBtn').addEventListener('click', () => {
+  const val = parseInt(document.getElementById('stepLogInput').value);
+  if (!val || val < 0) return;
+  const key = todayKey();
+  data.days[key] = (data.days[key] || 0) + val;
+  saveData(data);
+  document.getElementById('stepLogInput').value = '';
+  refreshUI();
+});
+
+document.getElementById('resetTodayBtn').addEventListener('click', () => {
+  data.days[todayKey()] = 0;
+  saveData(data);
+  refreshUI();
+});
+
+document.getElementById('clearAllBtn').addEventListener('click', () => {
+  data = { goal: data.goal, days: {} };
+  saveData(data);
+  refreshUI();
+});
+</script>
+{% endblock %}

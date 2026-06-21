@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+{% set active = "dashboard" %}
+{% block title %}Dashboard — NutriSense AI{% endblock %}
+
+{% block body %}
+<div class="content-plain" style="background:var(--green-50);">
+  <div style="max-width:900px;margin:0 auto;">
+
+    <!-- Greeting -->
+    <div style="margin-bottom:24px;animation:slideUp 0.5s ease both;">
+      <div class="eyebrow">Your Dashboard</div>
+      <h2 style="font-size:1.8rem;font-weight:800;color:var(--green-900);">
+        Welcome back, {{ name }} 👋
+      </h2>
+      <p style="color:var(--text-soft);">Here's your personalised health overview. Explore any module below.</p>
+    </div>
+
+    <!-- Quick tiles -->
+    <div class="dashboard-grid reveal-stagger in-view">
+      <a href="/symptoms" class="dash-tile">
+        <span class="dash-tile-icon">🩺</span>
+        <span class="dash-tile-label">Symptom Check</span>
+        <span style="font-size:0.74rem;color:var(--text-mute);">Detect deficiencies</span>
+      </a>
+      <a href="/deficiency" class="dash-tile">
+        <span class="dash-tile-icon">🥗</span>
+        <span class="dash-tile-label">Deficiency Guide</span>
+        <span style="font-size:0.74rem;color:var(--text-mute);">Foods & lifestyle</span>
+      </a>
+      <a href="/nutrients" class="dash-tile">
+        <span class="dash-tile-icon">🧬</span>
+        <span class="dash-tile-label">Nutrient Encyclopedia</span>
+        <span style="font-size:0.74rem;color:var(--text-mute);">All vitamins & minerals</span>
+      </a>
+      <a href="/bmi" class="dash-tile">
+        <span class="dash-tile-icon">📊</span>
+        <span class="dash-tile-label">BMI Calculator</span>
+        <span style="font-size:0.74rem;color:var(--text-mute);">Know your range</span>
+      </a>
+      <a href="/weightloss" class="dash-tile">
+        <span class="dash-tile-icon">🏃</span>
+        <span class="dash-tile-label">Weight Loss</span>
+        <span style="font-size:0.74rem;color:var(--text-mute);">Personalised plan</span>
+      </a>
+      <a href="/weightgain" class="dash-tile">
+        <span class="dash-tile-icon">💪</span>
+        <span class="dash-tile-label">Weight Gain</span>
+        <span style="font-size:0.74rem;color:var(--text-mute);">Build healthy mass</span>
+      </a>
+      <a href="/haircare" class="dash-tile">
+        <span class="dash-tile-icon">💇</span>
+        <span class="dash-tile-label">Hair Care</span>
+        <span style="font-size:0.74rem;color:var(--text-mute);">Problem solutions</span>
+      </a>
+      <a href="/skincare" class="dash-tile">
+        <span class="dash-tile-icon">💆</span>
+        <span class="dash-tile-label">Skin Care</span>
+        <span style="font-size:0.74rem;color:var(--text-mute);">Glow tips</span>
+      </a>
+      <a href="/feedback" class="dash-tile">
+        <span class="dash-tile-icon">✉️</span>
+        <span class="dash-tile-label">Feedback</span>
+        <span style="font-size:0.74rem;color:var(--text-mute);">Share thoughts</span>
+      </a>
+      <a href="/seasonal" class="dash-tile">
+        <span class="dash-tile-icon">🍉</span>
+        <span class="dash-tile-label">Seasonal Food Guide</span>
+        <span style="font-size:0.74rem;color:var(--text-mute);">Summer/winter/monsoon</span>
+      </a>
+      <a href="/protein" class="dash-tile">
+        <span class="dash-tile-icon">🌱</span>
+        <span class="dash-tile-label">Protein Calculator</span>
+        <span style="font-size:0.74rem;color:var(--text-mute);">Pure vegetarian targets</span>
+      </a>
+      <a href="/workout" class="dash-tile">
+        <span class="dash-tile-icon">🏋️</span>
+        <span class="dash-tile-label">Home Workout Planner</span>
+        <span style="font-size:0.74rem;color:var(--text-mute);">No-equipment routines</span>
+      </a>
+      <a href="/yoga" class="dash-tile">
+        <span class="dash-tile-icon">🧘</span>
+        <span class="dash-tile-label">Yoga for Deficiencies</span>
+        <span style="font-size:0.74rem;color:var(--text-mute);">Calcium, iron, stress</span>
+      </a>
+      <a href="/steps" class="dash-tile">
+        <span class="dash-tile-icon">🚶</span>
+        <span class="dash-tile-label">Step Goal Tracker</span>
+        <span style="font-size:0.74rem;color:var(--text-mute);">Set & track daily steps</span>
+      </a>
+      <a href="/immunity" class="dash-tile">
+        <span class="dash-tile-icon">🍵</span>
+        <span class="dash-tile-label">Immunity Recipes</span>
+        <span style="font-size:0.74rem;color:var(--text-mute);">Kadha, golden milk, amla</span>
+      </a>
+      <a href="/resources" class="dash-tile">
+        <span class="dash-tile-icon">📺</span>
+        <span class="dash-tile-label">Video & Official Resources</span>
+        <span style="font-size:0.74rem;color:var(--text-mute);">YouTube + WHO/ICMR/NIH</span>
+      </a>
+    </div>
+
+    <!-- Chart card -->
+    <div class="card card-wide reveal in-view" style="margin-top:28px;">
+      <div class="eyebrow">Health Overview</div>
+      <h3 style="font-size:1.1rem;font-weight:700;color:var(--green-900);margin-bottom:4px;">Wellness Indicators</h3>
+      <p style="color:var(--text-soft);font-size:0.85rem;margin-bottom:16px;">A snapshot of your key health parameters (sample data — complete modules to track real scores).</p>
+
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;">
+        {% for label, val, color in [('BMI Score','72','#40916c'),('Nutrition','68','#f59e0b'),('Fitness','55','#3b82f6'),('Lifestyle','80','#8b5cf6')] %}
+        <div style="text-align:center;">
+          <div style="font-size:1.4rem;font-weight:800;color:{{ color }};">{{ val }}%</div>
+          <div style="font-size:0.75rem;color:var(--text-mute);font-weight:600;">{{ label }}</div>
+          <div class="progress-bar-wrap" style="margin-top:6px;">
+            <div class="progress-bar-fill" style="width:{{ val }}%;background:{{ color }};"></div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <canvas id="dashChart" style="max-height:220px;"></canvas>
+    </div>
+
+    <!-- Tips banner -->
+    <div class="alert alert-info" style="margin-top:20px;animation:slideUp 0.7s ease both;">
+      💡 <strong>Tip of the day:</strong> Drink 8–10 glasses of water daily. Dehydration is a hidden cause of fatigue, skin issues, and poor digestion.
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const ctx = document.getElementById('dashChart').getContext('2d');
+new Chart(ctx, {
+  type: 'radar',
+  data: {
+    labels: ['BMI','Nutrition','Fitness','Lifestyle','Sleep','Hydration'],
+    datasets: [{
+      label: '{{ name }}',
+      data: [72, 68, 55, 80, 65, 70],
+      backgroundColor: 'rgba(64,145,108,0.15)',
+      borderColor: '#40916c',
+      borderWidth: 2.5,
+      pointBackgroundColor: '#40916c',
+      pointRadius: 4
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { display: false } },
+    scales: {
+      r: {
+        min: 0, max: 100,
+        ticks: { stepSize: 25, font: { size: 10 } },
+        grid: { color: 'rgba(0,0,0,0.06)' },
+        pointLabels: { font: { size: 11, weight: '600' } }
+      }
+    }
+  }
+});
+</script>
+{% endblock %}

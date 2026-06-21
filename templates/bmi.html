@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% set active = "bmi" %}
+{% block title %}BMI Calculator — NutriSense AI{% endblock %}
+
+{% block body %}
+<div class="page-bg" style="background-image:url('https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=1600');">
+  <div class="content" style="display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 62px);">
+    <div class="card card-sm reveal in-view">
+
+      <div class="eyebrow">Body Mass Index</div>
+      <h2 style="font-size:1.5rem;font-weight:800;color:var(--green-900);margin-bottom:16px;">BMI Calculator</h2>
+
+      <form method="post">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+          <div class="form-group">
+            <label>Height (cm)</label>
+            <input type="number" name="height" placeholder="165" min="100" max="250" required value="{{ request.form.get('height','') }}">
+          </div>
+          <div class="form-group">
+            <label>Weight (kg)</label>
+            <input type="number" name="weight" placeholder="60" min="20" max="300" required value="{{ request.form.get('weight','') }}">
+          </div>
+        </div>
+        <button class="btn btn-block" type="submit">📊 Calculate BMI</button>
+      </form>
+
+      {% if bmi %}
+      <div style="text-align:center;margin-top:24px;animation:slideUp 0.4s ease both;">
+
+        {% if category == 'Underweight' %}
+          {% set ring_class = 'underweight' %}{% set emoji = '⚠️' %}{% set color = '#3b82f6' %}
+          {% set advice = 'Consider a calorie-rich diet with Dal, Paneer, Dry Fruits, and Milk.' %}
+          {% set link_text = 'View Weight Gain Plan' %}{% set link_href = '/weightgain' %}
+        {% elif category == 'Normal' %}
+          {% set ring_class = 'normal' %}{% set emoji = '✅' %}{% set color = '#40916c' %}
+          {% set advice = 'Great work! Maintain your balanced diet and regular activity.' %}
+          {% set link_text = 'View Deficiency Guide' %}{% set link_href = '/deficiency' %}
+        {% elif category == 'Overweight' %}
+          {% set ring_class = 'overweight' %}{% set emoji = '⚠️' %}{% set color = '#f59e0b' %}
+          {% set advice = 'Focus on a low-calorie diet with salads, dal, and daily walking.' %}
+          {% set link_text = 'View Weight Loss Plan' %}{% set link_href = '/weightloss' %}
+        {% else %}
+          {% set ring_class = 'obese' %}{% set emoji = '🚨' %}{% set color = '#ef4444' %}
+          {% set advice = 'Consult a doctor. Start with low-impact exercise and a controlled diet.' %}
+          {% set link_text = 'View Weight Loss Plan' %}{% set link_href = '/weightloss' %}
+        {% endif %}
+
+        <div class="bmi-ring {{ ring_class }}">
+          {{ bmi }}<span style="font-size:0.7rem;font-weight:600;margin-top:2px;">{{ category }}</span>
+        </div>
+
+        <div class="alert alert-info" style="text-align:left;">
+          {{ emoji }} <strong>{{ category }}:</strong> {{ advice }}
+        </div>
+
+        <!-- BMI scale visual -->
+        <div style="margin:16px 0 4px;font-size:0.8rem;color:var(--text-soft);text-align:left;font-weight:600;">BMI Scale</div>
+        <div class="bmi-scale">
+          <div class="bmi-scale-seg" style="background:#3b82f6;flex:1.5;" title="Underweight <18.5"></div>
+          <div class="bmi-scale-seg" style="background:#40916c;flex:2;" title="Normal 18.5–24.9"></div>
+          <div class="bmi-scale-seg" style="background:#f59e0b;flex:1.5;" title="Overweight 25–29.9"></div>
+          <div class="bmi-scale-seg" style="background:#ef4444;flex:1;" title="Obese 30+"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:0.7rem;color:var(--text-mute);margin-bottom:16px;">
+          <span>&lt;18.5</span><span>18.5</span><span>25</span><span>30</span><span>35+</span>
+        </div>
+
+        <a href="{{ link_href }}" class="btn btn-outline" style="width:100%;justify-content:center;">
+          {{ link_text }} →
+        </a>
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+{% endblock %}
